@@ -85,7 +85,7 @@ plot <- ggmap(map_data) +
     y = ""
   ) +
   theme(
-    plot.margin = margin(0, 0, -17, -17, "pt"),
+    plot.margin = margin(0, 0, -16, -16, "pt"),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.grid.major.y = element_blank(),
