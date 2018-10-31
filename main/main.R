@@ -22,7 +22,7 @@ stations <- "http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&j
 # get BART routes info from api
 all_routes_numbers <- c(7, 1, 11, 5, 19, 3)
 
-spread_width <- 2.5e-3
+spread_width <- 3e-3
 routes <- all_routes_numbers %>% 
   paste0(
     "http://api.bart.gov/api/route.aspx?cmd=routeinfo&route=",
@@ -63,8 +63,7 @@ routes <- all_routes_numbers %>%
         latitude - seq(-spread_width, spread_width, length.out = n()) * n(),
       TRUE ~ latitude + seq(-spread_width, spread_width, length.out = n()) * n()
     )
-  ) %>% 
-  ungroup()
+  )
   
 # get bay area map info
 map_data <- get_map(
@@ -76,7 +75,7 @@ map_data <- get_map(
 
 # plot
 plot <- ggmap(map_data) +
-  geom_path(data = routes, aes(x = longitude, y = latitude, group = number), color = routes$hexcolor, size = 2.5) +
+  geom_path(data = routes, aes(x = longitude, y = latitude, group = number), color = routes$hexcolor, size = 3, linejoin = "round", lineend = "round") +
   geom_point(data = stations, aes(x = longitude, y = latitude), color = "black", size = 9, alpha = 0.5) +
   geom_point(data = stations, aes(x = longitude, y = latitude), color = "white", size = 7, alpha = 0.8) +
   # geom_text(data = stations, aes(label = abbr, x = longitude, y = latitude)) +
@@ -97,7 +96,7 @@ print(plot)
 
 
 #==== output =====
-svg("output/BART.svg", width = 12, height = 12)
+svg("output/BART.svg", width = 10, height = 10)
 print(plot)
 dev.off()
 
