@@ -96,7 +96,7 @@ print(plot)
 
 
 #==== output =====
-svg("output/BART.svg", width = 8, height = 8)
+svg("output/BART.svg", width = 10, height = 10)
 print(plot)
 dev.off()
 
