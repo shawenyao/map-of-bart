@@ -1,5 +1,7 @@
+#' get BART stations from api.bart.gov
 #'
-#'
+#' @return a data.frame of BART stations
+#' 
 get_bart_stations <- function(){
   
   "http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y" %>% 
@@ -15,7 +17,11 @@ get_bart_stations <- function(){
 }
 
 
+#' get BART routes from api.bart.gov
 #'
+#' @param route_numbers a numeric vector of route numbers
+#' 
+#' @return a data.frame of BART routes
 #'
 get_bart_routes <- function(route_numbers){
   
@@ -46,9 +52,14 @@ get_bart_routes <- function(route_numbers){
 
 #' spread the station coordinates if multiple routes share the same station
 #'
-spread_routes <- function(routes_with_station_coordinates, spread_width){
+#' @param routes a data.frame of BART routes with station coordinates
+#' @param spread_width a constant value controlling how far part the routes need to be spreaded
+#' 
+#' @return a data.frame of BART routes with spreaded station coordinates
+#'
+spread_routes <- function(routes, spread_width){
   
-  routes_with_station_coordinates %>% 
+  routes %>% 
     group_by(stations) %>% 
     mutate(
       # spread the stations coordinates if multiple routes share the same station
@@ -70,18 +81,24 @@ spread_routes <- function(routes_with_station_coordinates, spread_width){
 }
 
 
-#'
-#'
+#' plot the BART routes and stations
+#' 
+#' @param map_data the background map
+#' @param routes a data.frame of BART routes
+#' @param stations a data.frame of BART stations
+#' 
+#' @return a ggplot object
+#' 
 plot_bart <- function(map_data, routes, stations){
   
   ggmap(map_data) +
     # the stroke of the routes
     geom_path(data = routes, aes(x = x, y = y, group = number), color = "black", size = 4, alpha = 0.5, linejoin = "round", lineend = "round") +
     # the routes
-    geom_path(data = routes, aes(x = x, y = y, group = number), color = routes$hexcolor, size = 3, alpha = 0.99, linejoin = "round", lineend = "round") +
+    geom_path(data = routes, aes(x = x, y = y, group = number), color = routes$hexcolor, size = 3, alpha = 1, linejoin = "round", lineend = "round") +
     # the stroke of the stations
     geom_point(data = stations, aes(x = longitude, y = latitude), color = "black", size = 9, alpha = 0.5) +
-    # th stations
+    # the stations
     geom_point(data = stations, aes(x = longitude, y = latitude), color = "white", size = 7, alpha = 0.8) +
     labs(x = "", y = "") +
     theme(

@@ -21,4 +21,5 @@ bind_rows(
   geom_path(size = 3, linejoin = "round", lineend = "round") +
   geom_point(size = 6, aes(color = type)) +
   facet_grid(.~type) +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "none")
