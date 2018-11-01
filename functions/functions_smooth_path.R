@@ -6,7 +6,11 @@
 #' 
 normalize_vector <- function(numeric_vector){
   
-  numeric_vector / sqrt(sum(numeric_vector ^ 2))
+  if(all(numeric_vector == c(0, 0))){
+    numeric_vector
+  }else{
+    numeric_vector / sqrt(sum(numeric_vector ^ 2))
+  }
 }
 
 
@@ -77,8 +81,36 @@ smooth_path <- function(path, lamda = 0.2){
       smooth_subpath(subpath = path %>% slice(i:(i+2)), lamda = lamda)
     }) %>% 
     bind_rows() %>% 
-    # append the last two points as is
+    # append the last two points as is, plus the midpoint between them
     bind_rows(
-      path %>% select(x, y) %>% tail(2)
+      path %>% select(x, y) %>% tail(2) %>% slice(c(1, 1:2)) %>% 
+        # create the midpoint
+        mutate(
+          x = if_else(row_number() == 2, x[1] / 2 + x[3] / 2, x),
+          y = if_else(row_number() == 2, y[1] / 2 + y[3] / 2, y)
+        )
     )
+}
+
+
+#' interpolate over every consecutive 3-point subpath
+#' both in the original and the reversed order
+#' and average them
+#' 
+#' @param path a data.frame of the Cartiesian coordinates of the path
+#' 
+#' @return a data.frame of the smoothed path
+#' 
+smooth_path_double <- function(path, lamda = 0.2){
+  
+  path1 <- smooth_path(path, lamda = lamda)
+  path2 <- smooth_path(path %>% slice(seq(nrow(.), 1, by = -1)), lamda = lamda)
+  
+  output <- path1 %>% 
+    mutate(
+      x = (x + rev(path2$x)) / 2,
+      y = (y + rev(path2$y)) / 2
+    )
+  
+  output
 }
