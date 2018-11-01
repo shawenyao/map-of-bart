@@ -20,7 +20,7 @@ stations <- "http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&j
   )
 
 # get BART routes info from api
-all_routes_numbers <- c(7, 1, 11, 5, 19, 3)
+all_routes_numbers <- c(19, 7, 1, 11, 5, 3)
 
 spread_width <- 3e-3
 routes <- all_routes_numbers %>% 
@@ -54,11 +54,13 @@ routes <- all_routes_numbers %>%
   mutate(
     # spread the stations coordinates if multiple routes share the same station
     longitude = case_when(
-      n() == 1 ~ longitude,
+      # route 19 is an exception
+      n() == 1 | number == 19 ~ longitude,
       TRUE ~ longitude + seq(-spread_width, spread_width, length.out = n()) * n()
     ),
     latitude = case_when(
-      n() == 1 ~ latitude,
+      # route 19 is an exception
+      n() == 1 | number == 19 ~ latitude,
       (county %in% c("sanfrancisco") | stations %in% c("DALY") | city %in% c("Oakland")) & !stations %in% c("LAKE", "FTVL", "COLS") ~ 
         latitude - seq(-spread_width, spread_width, length.out = n()) * n(),
       TRUE ~ latitude + seq(-spread_width, spread_width, length.out = n()) * n()
@@ -75,7 +77,7 @@ map_data <- get_map(
 
 # plot
 plot <- ggmap(map_data) +
-  geom_path(data = routes, aes(x = longitude, y = latitude, group = number), color = routes$hexcolor, size = 3, linejoin = "round", lineend = "round") +
+  geom_path(data = routes, aes(x = longitude, y = latitude, group = number), color = routes$hexcolor, size = 3.5, linejoin = "round", lineend = "round") +
   geom_point(data = stations, aes(x = longitude, y = latitude), color = "black", size = 9, alpha = 0.5) +
   geom_point(data = stations, aes(x = longitude, y = latitude), color = "white", size = 7, alpha = 0.8) +
   # geom_text(data = stations, aes(label = abbr, x = longitude, y = latitude)) +
