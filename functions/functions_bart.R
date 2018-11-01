@@ -71,7 +71,7 @@ spread_routes <- function(routes, spread_width){
       latitude = case_when(
         # route 19 is an exception (only 2 stops)
         n() == 1 | number == 19 ~ latitude,
-        # determine the direction of the shift based on stations
+        # determine the direction of the shift based on station info
         (county %in% c("sanfrancisco") | stations %in% c("DALY") | city %in% c("Oakland")) & !stations %in% c("LAKE", "FTVL", "COLS") ~ 
           latitude - seq(-spread_width, spread_width, length.out = n()) * n(),
         TRUE ~ latitude + seq(-spread_width, spread_width, length.out = n()) * n()
