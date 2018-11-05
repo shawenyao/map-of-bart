@@ -28,11 +28,11 @@ normalize_vector <- function(numeric_vector){
 #' smooth a given path defined by three points p1, p2 and p3
 #'
 #' @param subpath a data.frame of the Cartiesian coordinates of p1, p2 and p3
-#' @param lamda a constant that controls the extent to which the curvature is applied
+#' @param lambda a constant that controls the extent to which the curvature is applied
 #' 
 #' @return a data.frame of the coordinates of p1 and the interpolated point
 #' 
-smooth_subpath <- function(subpath, lamda = 0.2){
+smooth_subpath <- function(subpath, lambda = 0.2){
   
   x <- subpath$x
   y <- subpath$y
@@ -62,7 +62,7 @@ smooth_subpath <- function(subpath, lamda = 0.2){
     # the midpoint of the segment
     c(1 / 2 * (x[1] + x[2]), 1 / 2 * (y[1] + y[2])) +
     # the curvature adjustment rate
-    lamda *
+    lambda *
     # the curvature
     (cos_theta + 1) *
     # the direction at which to apply the shift
@@ -84,12 +84,12 @@ smooth_subpath <- function(subpath, lamda = 0.2){
 #' 
 #' @return a data.frame of the smoothed path
 #' 
-smooth_path <- function(path, lamda = 0.2){
+smooth_path <- function(path, lambda = 0.2){
   
   seq_len(nrow(path) - 2) %>% 
     # loop for every 3-point subpath
     map(function(i){
-      smooth_subpath(subpath = path %>% slice(i:(i+2)), lamda = lamda)
+      smooth_subpath(subpath = path %>% slice(i:(i+2)), lambda = lambda)
     }) %>% 
     bind_rows() %>% 
     # append the last two points as is, plus the midpoint between them
@@ -124,10 +124,10 @@ smooth_path <- function(path, lamda = 0.2){
 #' 
 #' @return a data.frame of the smoothed path
 #' 
-smooth_path_double <- function(path, lamda = 0.2){
+smooth_path_double <- function(path, lambda = 0.2){
   
-  path1 <- smooth_path(path, lamda = lamda)
-  path2 <- smooth_path(path %>% reverse_df(), lamda = lamda)
+  path1 <- smooth_path(path, lambda = lambda)
+  path2 <- smooth_path(path %>% reverse_df(), lambda = lambda)
   
   # the average position between interpolation from the original path and reversed path
   # except for the first and last 2 points

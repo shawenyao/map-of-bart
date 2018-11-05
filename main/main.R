@@ -44,7 +44,7 @@ routes_smoothed <- routes_spreaded %>%
   select(number, hexcolor, x = longitude, y = latitude) %>% 
   group_by(number, hexcolor) %>% 
   do(
-    smooth_path(., lamda = 0.15) %>% 
+    smooth_path(., lambda = 0.15) %>% 
       smooth_path() %>% 
       smooth_path()
   )
