@@ -118,6 +118,7 @@ smooth_path_double <- function(path, lamda = 0.2){
   path1 <- smooth_path(path, lamda = lamda)
   path2 <- smooth_path(path %>% slice(seq(nrow(.), 1, by = -1)), lamda = lamda)
   
+  # the average position between interpolation from the original path and reversed path
   output <- path1 %>% 
     mutate(
       x = (x + rev(path2$x)) / 2,
