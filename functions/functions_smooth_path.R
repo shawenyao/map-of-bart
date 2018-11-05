@@ -9,6 +9,7 @@ reverse_df <- function(df){
   df %>% slice(seq(nrow(.), 1, by = -1))
 }
 
+
 #' normalize a vector to become a unit vector
 #' 
 #' @param numeric_vector a numeric vector to be normalized
