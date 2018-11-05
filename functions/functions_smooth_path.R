@@ -1,3 +1,14 @@
+#' reverse the row order of a data.frame
+#' 
+#' @param df a data.frame
+#' 
+#' @return a data.frame with reversed row order
+#' 
+reverse_df <- function(df){
+  
+  df %>% slice(seq(nrow(.), 1, by = -1))
+}
+
 #' normalize a vector to become a unit vector
 #' 
 #' @param numeric_vector a numeric vector to be normalized
@@ -86,19 +97,19 @@ smooth_path <- function(path, lamda = 0.2){
       tibble(
         x = c(
           # the second to last point
-          nth(path$x, nrow(path) - 1),
+          tail(path$x, 2)[1],
           # the midpoint between the last 2 points
           mean(tail(path$x, 2)),
           # the last point
-          last(path$x)
+          tail(path$x, 1)
         ),
         y = c(
           # the second to last point
-          nth(path$y, nrow(path) - 1),
+          tail(path$y, 2)[1],
           # create the midpoint between the last 2 points
           mean(tail(path$y, 2)),
           # the last point
-          last(path$y)
+          tail(path$y, 1)
         )
       )
     )
@@ -116,14 +127,13 @@ smooth_path <- function(path, lamda = 0.2){
 smooth_path_double <- function(path, lamda = 0.2){
   
   path1 <- smooth_path(path, lamda = lamda)
-  path2 <- smooth_path(path %>% slice(seq(nrow(.), 1, by = -1)), lamda = lamda)
+  path2 <- smooth_path(path %>% reverse_df(), lamda = lamda)
   
   # the average position between interpolation from the original path and reversed path
-  output <- path1 %>% 
-    mutate(
-      x = (x + rev(path2$x)) / 2,
-      y = (y + rev(path2$y)) / 2
-    )
-  
-  output
+  # except for the first and last 2 points
+  weight <- c(rep(1, times = 2), rep(0.5, times = nrow(path1) - 4), rep(0, times = 2))
+  tibble(
+    x = path1$x * weight + rev(path2$x) * (1 - weight),
+    y = path1$y * weight + rev(path2$y) * (1 - weight)
+  )
 }
