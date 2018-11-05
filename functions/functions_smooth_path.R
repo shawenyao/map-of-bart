@@ -83,12 +83,24 @@ smooth_path <- function(path, lamda = 0.2){
     bind_rows() %>% 
     # append the last two points as is, plus the midpoint between them
     bind_rows(
-      path %>% select(x, y) %>% tail(2) %>% slice(c(1, 1:2)) %>% 
-        # create the midpoint
-        mutate(
-          x = if_else(row_number() == 2, x[1] / 2 + x[3] / 2, x),
-          y = if_else(row_number() == 2, y[1] / 2 + y[3] / 2, y)
+      tibble(
+        x = c(
+          # the second to last point
+          nth(path$x, nrow(path) - 1),
+          # the midpoint between the last 2 points
+          mean(tail(path$x, 2)),
+          # the last point
+          last(path$x)
+        ),
+        y = c(
+          # the second to last point
+          nth(path$y, nrow(path) - 1),
+          # create the midpoint between the last 2 points
+          mean(tail(path$y, 2)),
+          # the last point
+          last(path$y)
         )
+      )
     )
 }
 
