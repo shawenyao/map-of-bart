@@ -20,6 +20,8 @@ stations <- get_bart_stations()
 routes <- get_bart_routes(c(19, 7, 1, 11, 5, 3))
 
 # get bay area map info
+# note: Google no longer accept keyless access to its API
+# use register_google() to specify user key first
 map_data <- get_map(
   location = c(lon = mean(stations$longitude), lat = mean(stations$latitude)), 
   maptype = "roadmap",
@@ -60,7 +62,7 @@ svg("output/BART.svg", width = 10, height = 10)
 print(plot)
 dev.off()
 
-png("output/BART.png", width = 880, height = 880)
+png("output/BART.png", width = 880, height = 880, type = "cairo")
 print(plot)
 dev.off()
 
