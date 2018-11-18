@@ -20,7 +20,7 @@ stations <- get_bart_stations()
 routes <- get_bart_routes(c(19, 7, 1, 11, 5, 3))
 
 # get bay area map info
-# note: Google no longer accept keyless access to its API
+# note: Google no longer accepts keyless access to its API
 # use register_google() to specify user key first
 map_data <- get_map(
   location = c(lon = mean(stations$longitude), lat = mean(stations$latitude)), 
