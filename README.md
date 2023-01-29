@@ -1,4 +1,4 @@
-# BART
+# Map of BART
 
 Routes and stations from the Bay Area Rapid Transit system
 
